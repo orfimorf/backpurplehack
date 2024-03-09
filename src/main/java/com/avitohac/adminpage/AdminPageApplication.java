@@ -8,6 +8,8 @@ public class AdminPageApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AdminPageApplication.class, args);
+		System.out.print("SERVER STARTED");
+		//todo
 	}
 
 }

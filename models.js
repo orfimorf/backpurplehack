@@ -1,13 +1,18 @@
-const sequelize = require('../db')
-const { DataTypes } = require('sequelize')
+const sequelize = require('./db')
+const {DataTypes} = require('sequelize')
 
 
 const Baseline = sequelize.define('baseline', {
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    name: { type: DataTypes.STRING, allowNull: true }
+    id: {type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, allowNull: true}
 
 })
 
+const Discount = sequelize.define('discount', {
+    id: {type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, allowNull: true}
+})
+
 module.exports = {
-    Baseline
+    Baseline, Discount
 }

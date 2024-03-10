@@ -35,7 +35,7 @@ class BaselineController {
     async update(req, res, next) {
         try {
             const {newName, oldName} = req.body
-            const response = await Baseline.update({newName}, {where: {name: oldName}})
+            const response = await Baseline.update({name: newName}, {where: {name: oldName}})
             return res.json(response)
         } catch (e) {
             next(ApiError.badRequest(e.message))

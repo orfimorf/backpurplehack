@@ -35,7 +35,7 @@ class DiscountController {
     async update(req, res, next) {
         try {
             const {newName, oldName} = req.body
-            const response = await Discount.update({newName}, {where: {name: oldName}})
+            const response = await Discount.update({name: newName}, {where: {name: oldName}})
             return res.json(response)
         } catch (e) {
             next(ApiError.badRequest(e.message))

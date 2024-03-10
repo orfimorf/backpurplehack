@@ -6,6 +6,8 @@ class User {
     }
 
     async findCost() {
-        
+        return 1
     }
 }
+
+module.exports = User

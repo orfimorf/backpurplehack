@@ -1,31 +1,13 @@
-require('dotenv').config() //Подключение к окружению
-const express = require('express') //Подключение фреймворка
-const sequelize = require('./db')  //Подключение к бд
-const PORT = process.env.PORT || 5000 //Инициализация порта
-const app = express() //Объект приложения
+require('dotenv').config()
+const express = require('express')
+const sequelize = require('./db')
+const router = require("./routers");
+const PORT = process.env.PORT || 5000
+const app = express()
 
+app.use(express.json())
+app.use('/api', router)
 
-
-
-// const corsOptions ={
-//     origin:'http://localhost:3000', 
-//     credentials:true,            //access-control-allow-credentials:true
-//     optionSuccessStatus:200
-// }
-// app.use(cors(corsOptions));
-
-
-app.use(express.json())  //Это чтобы приложение могло парсить json формат
-
-// app.use('/api', router)
-
-//Обработка ошибок, последний Middleware
-//!!!РЕГИСТРИРУЕТСЯ ОБЯЗАТЕЛЬНО В САМОМ КОНЦЕ!!!
-// app.use(errorHandler)
-
-
-
-//Запуск сервера
 const start = async () => {
     try {
         await sequelize.authenticate()

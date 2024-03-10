@@ -4,6 +4,7 @@ const sequelize = require('./db')
 const router = require("./routers");
 const PORT = process.env.PORT || 5000
 const app = express()
+const model = require('./models')
 
 app.use(express.json())
 app.use('/api', router)

@@ -1,7 +1,7 @@
-const {mockSegments} = require('../mocks/DiscountMock')
+const SegmentsMock = require('../mocks/SegmentsMock')
 
 class DiscountSegments {
-    static segments = mockSegments
+    static segments = SegmentsMock.mockSegments
 
     static async getSegmentsByUserId(id) {
         let segment = this.segments[id]

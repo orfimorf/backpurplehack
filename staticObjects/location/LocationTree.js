@@ -11,6 +11,10 @@ class LocationTree {
         this._initialize()
     }
 
+    getLocation(id) {
+        return this._locations[id]
+    }
+
     _initialize() {
         for (let key in this._locations) {
             let child = new LocationNode(this._index, key, this._root)
@@ -52,4 +56,4 @@ class LocationTree {
     }
 }
 
-module.exports = LocationTree
+module.exports = new LocationTree

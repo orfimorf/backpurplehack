@@ -11,6 +11,10 @@ class MicrocategoryTree {
         this._initialize()
     }
 
+    getMicrocategory(id) {
+        return this._microcategories[id]
+    }
+
     _initialize() {
         for (let key in this._microcategories) {
             let child = new MicrocategoryNode(this._index, key, this._root)
@@ -52,4 +56,4 @@ class MicrocategoryTree {
     }
 }
 
-module.exports = MicrocategoryTree
+module.exports = new MicrocategoryTree()

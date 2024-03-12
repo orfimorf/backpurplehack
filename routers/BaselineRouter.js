@@ -3,7 +3,6 @@ const router = new Router()
 
 const baselineController = require('../controllers/BaselineController')
 
-
 router.post('/create', baselineController.create)
 
 router.get('/get', baselineController.get)

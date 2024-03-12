@@ -12,6 +12,10 @@ class ApiError extends Error {
     static internal() {
         return new ApiError(500, 'Непредвиденная ошибка')
     }
+
+    static configurationError(message) {
+        return new ApiError(422, message)
+    }
 }
 
 module.exports = ApiError

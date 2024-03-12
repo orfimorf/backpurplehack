@@ -1,6 +1,6 @@
 const db = require("../db");
 const ApiError = require("../errors/ApiError");
-const {Baseline} = require('../models')
+
 
 
 class MatrixController {
@@ -9,28 +9,29 @@ class MatrixController {
             const {nameMatrix, ids, categories, locations} = req.body
 
             let flag = false
-            let sql = "SELECT id, microcategory_id, location_id, price FROM \"" + nameMatrix + "\" where "
+            let sql = `SELECT id, microcategory_id, location_id, price FROM ${nameMatrix} where `
 
             if (ids) {
-                sql = sql + "id=ANY(ARRAY[" + ids.toString() + "])"
+                sql = sql + `id=ANY(ARRAY[${ids}])`
                 flag = true
             }
             if (flag && categories) {
-                sql = sql + " and microcategory_id=ANY(ARRAY[" + categories.toString() + "])"
+                sql = sql + ` and microcategory_id=ANY(ARRAY[${categories}])`
             } else if (!flag && categories) {
-                sql = sql + "microcategory_id=ANY(ARRAY[" + categories.toString() + "])"
+                sql = sql + `microcategory_id=ANY(ARRAY[${categories}])`
                 flag = true
             }
 
             if (flag && locations) {
-                sql = sql + " and location_id=ANY(ARRAY[" + locations.toString() + "])"
+                sql = sql + ` and location_id=ANY(ARRAY[${locations}])`
             } else if (!flag && locations) {
-                sql = sql + "location_id=ANY(ARRAY[" + locations.toString() + "])"
-                flag = true
+                sql = sql + `location_id=ANY(ARRAY[${locations}])`
             }
-            sql += ";"
+
+            sql += `;`
 
             return res.json((await db.query(sql))[0])
+
         } catch (e) {
             next(ApiError.badRequest(e.message))
         }

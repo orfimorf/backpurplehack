@@ -56,4 +56,4 @@ class LocationTree {
     }
 }
 
-module.exports = new LocationTree
+module.exports = new LocationTree()

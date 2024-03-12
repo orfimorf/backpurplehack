@@ -6,10 +6,12 @@ const router = require("./routers");
 const PORT = process.env.PORT || 5000
 const app = express()
 const model = require('./models')
+const errorHandler = require('./middlewares/ErrorHandlingMiddleware')
 
 app.use(express.json())
 app.use(fileUpload({}));
 app.use('/api', router)
+app.use(errorHandler)
 
 const start = async () => {
     try {

@@ -49,7 +49,7 @@ class MatrixController {
                     "id": item.id,
                     "category": serverConfiguration.microcategoryTree.getNameById(item.microcategory_id),
                     "location": serverConfiguration.locationTree.getNameById(item.location_id),
-                    "price": item.price
+                    "value": item.price
                 }
             })
 

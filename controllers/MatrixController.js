@@ -21,7 +21,7 @@ class MatrixController {
             locations = locationsIds
 
             let flag = false
-            let sql = `SELECT id, microcategory_id, location_id, price FROM ${nameMatrix} where `
+                let sql = `SELECT id, microcategory_id, location_id, price FROM \"${nameMatrix}\" where `
 
             if (categories) {
                 sql = sql + `microcategory_id=ANY(ARRAY[${categories}])`
@@ -37,6 +37,7 @@ class MatrixController {
             sql += `;`
 
             const response = await db.query(sql)
+            console.log("респонс111111111111111",response)
             const result = response[0].map(item => {
                 return {
                     "id": item.id,

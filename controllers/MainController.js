@@ -1,15 +1,18 @@
 const ApiError = require('../errors/ApiError')
 const {Baseline, Discount} = require('../models')
 const sequelize = require('../db')
+const serverConfiguration = require('../ServerConfiguration')
 
 class MainController {
     async generateClient(req, res, next) {
         try {
             const baselines = await Baseline.findAll()
             const discounts = await Discount.findAll()
+            const segments = serverConfiguration.unusedSegments
             return res.json({
                 "baselines": baselines,
-                "discounts": discounts
+                "discounts": discounts,
+                "unused_segments": segments
             })
         } catch (e) {
             next(ApiError.badRequest(e.message))

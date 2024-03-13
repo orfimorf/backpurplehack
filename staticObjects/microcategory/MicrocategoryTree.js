@@ -9,11 +9,38 @@ class MicrocategoryTree {
         this._indexes = []
         this._microcategoriesNamesInArray = []
         this._indexes[1] = this._root
+        this._namesAndIndexes = {}
         this._initialize()
     }
 
     getMicrocategory(id) {
-        return this._microcategories[id]
+        return this._indexes[id]
+    }
+
+    getIdByName(name) {
+        return this._namesAndIndexes[name]
+    }
+
+    getNameById(id) {
+        return this.getMicrocategory(id).name
+    }
+
+    getSubCategories(name) {
+        let subCategories = []
+        const rootId = this.getIdByName(name)
+        const root = this.getMicrocategory(rootId)
+        subCategories.push(root.id)
+        root.children.forEach(child => {
+            this._getSubCategoriesFromNode(child, subCategories)
+        })
+        return subCategories
+    }
+
+    _getSubCategoriesFromNode(root, subCategories) {
+        subCategories.push(root.id)
+        root.children.forEach(child => {
+            this._getSubCategoriesFromNode(child, subCategories)
+        })
     }
 
     get microcategoriesNamesInArray() {
@@ -24,6 +51,7 @@ class MicrocategoryTree {
         for (let key in this._microcategories) {
             let child = new MicrocategoryNode(this._index, key, this._root)
             this._indexes[child.id] = child
+            this._namesAndIndexes[child.name] = child.id
             this._index++
             this._root.setChild(child)
             this._microcategories[key].forEach(value => {
@@ -44,6 +72,7 @@ class MicrocategoryTree {
         if (typeof microcategories == "string") {
             let node = new MicrocategoryNode(this._index, microcategories, root)
             this._indexes[node.id] = node
+            this._namesAndIndexes[node.name] = node.id
             this._index++
             return node
         }
@@ -51,6 +80,7 @@ class MicrocategoryTree {
         for (let key in microcategories) {
             let node = new MicrocategoryNode(this._index, key, root)
             this._indexes[node.id] = node
+            this._namesAndIndexes[node.name] = node.id
             this._index++
             root.setChild(node)
             microcategories[key].forEach(value => {

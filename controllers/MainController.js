@@ -51,10 +51,6 @@ class MainController {
                 )
             }
 
-            /**
-             * TODO РЕШИТЬ, КАК КАКАТЬ
-             */
-
             await t.commit()
             serverConfiguration.reInitializeServer()
             return res.json("ок")

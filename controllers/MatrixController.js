@@ -1,12 +1,25 @@
 const db = require("../db");
 const ApiError = require("../errors/ApiError");
+const serverConfiguration = require('../ServerConfiguration')
 
 
 
 class MatrixController {
     async getMatrix(req, res, next) {
         try {
-            const {nameMatrix, ids, categories, locations} = req.body
+            let {nameMatrix, ids, categories, locations} = req.body
+
+            const categoriesIds = []
+            categories.forEach(category => {
+                categoriesIds.push(...serverConfiguration.microcategoryTree.getSubCategories(category))
+            })
+            categories = categoriesIds
+
+            const locationsIds = []
+            locations.forEach(location => {
+                locationsIds.push(...serverConfiguration.locationTree.getSubLocations(location))
+            })
+            locations = locationsIds
 
             let flag = false
             let sql = `SELECT id, microcategory_id, location_id, price FROM ${nameMatrix} where `
@@ -30,7 +43,17 @@ class MatrixController {
 
             sql += `;`
 
-            return res.json((await db.query(sql))[0])
+            const response = await db.query(sql)
+            const result = response[0].map(item => {
+                return {
+                    "id": item.id,
+                    "category": serverConfiguration.microcategoryTree.getNameById(item.microcategory_id),
+                    "location": serverConfiguration.locationTree.getNameById(item.location_id),
+                    "price": item.price
+                }
+            })
+
+            return res.json(result)
 
         } catch (e) {
             next(ApiError.badRequest(e.message))

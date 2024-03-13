@@ -9,11 +9,38 @@ class LocationTree {
         this._indexes = []
         this._locationsNamesInArray = []
         this._indexes[1] = this._root
+        this._namesAndIndexes = {}
         this._initialize()
     }
 
     getLocation(id) {
-        return this._locations[id]
+        return this._indexes[id]
+    }
+
+    getIdByName(name) {
+        return this._namesAndIndexes[name]
+    }
+
+    getNameById(id) {
+        return this.getLocation(id).name
+    }
+
+    getSubLocations(name) {
+        let subLocations = []
+        const rootId = this.getIdByName(name)
+        const root = this.getLocation(rootId)
+        subLocations.push(root.id)
+        root.children.forEach(child => {
+            this._getSubLocationsFromNode(child, subLocations)
+        })
+        return subLocations
+    }
+
+    _getSubLocationsFromNode(root, subLocations) {
+        subLocations.push(root.id)
+        root.children.forEach(child => {
+            this._getSubLocationsFromNode(child, subLocations)
+        })
     }
 
     get locationsNamesInArray() {
@@ -24,6 +51,7 @@ class LocationTree {
         for (let key in this._locations) {
             let child = new LocationNode(this._index, key, this._root)
             this._indexes[child.id] = child
+            this._namesAndIndexes[child.name] = child.id
             this._index++
             this._root.setChild(child)
             this._locations[key].forEach(value => {
@@ -44,6 +72,7 @@ class LocationTree {
         if (typeof locations == "string") {
             let node = new LocationNode(this._index, locations, root)
             this._indexes[node.id] = node
+            this._namesAndIndexes[node.name] = node.id
             this._index++
             return node
         }
@@ -51,6 +80,7 @@ class LocationTree {
         for (let key in locations) {
             let node = new LocationNode(this._index, key, root)
             this._indexes[node.id] = node
+            this._namesAndIndexes[node.name] = node.id
             this._index++
             root.setChild(node)
             locations[key].forEach(value => {

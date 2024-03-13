@@ -66,7 +66,7 @@ class BaselineController {
 
             if (updates && updates.length > 0) {
                 for (const r of updates) {
-                    await db.query(`UPDATE "${newMatrixName}" SET price=${r.price} microcategory_id=${serverConfiguration.microcategoryTree.getIdByName(r.category)} location_id=${serverConfiguration.locationTree.getIdByName(r.location)} WHERE id=${r.id};`)
+                    await db.query(`UPDATE "${newMatrixName}" SET price=${r.price} and microcategory_id=${serverConfiguration.microcategoryTree.getIdByName(r.category)} and location_id=${serverConfiguration.locationTree.getIdByName(r.location)} WHERE id=${r.id};`)
                 }
             }
 

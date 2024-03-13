@@ -84,7 +84,11 @@ class DiscountController {
             return res.json(200)
 
         } catch (e) {
-            await t.rollback()
+            try {
+                await t.rollback()
+            } catch (e) {
+                next(ApiError.badRequest(e.message))
+            }
             next(ApiError.badRequest(e.message))
         }
     }

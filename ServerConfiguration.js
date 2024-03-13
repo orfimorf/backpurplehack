@@ -33,7 +33,7 @@ class ServerConfiguration {
         const userSegments = this._getUserSegments()
 
         const segments = []
-        userSegments.keys().forEach(key => {
+        Object.keys(userSegments).forEach(key => {
             segments.push(...userSegments[key])
         })
 
@@ -54,11 +54,35 @@ class ServerConfiguration {
     }
 
     _getBaselineMatrix() {
-
+        return [
+            {
+                "id": 1,
+                "name": "baseline_1",
+                "active": false
+            },
+            {
+                "id": 2,
+                "name": "baseline_2",
+                "active": true
+            }
+        ]
     }
 
     _getDiscountMatrices() {
-
+        return [
+            {
+                "id": 1,
+                "name": "discount_1",
+                "active": false,
+                "segment": null
+            },
+            {
+                "id": 2,
+                "name": "discount_2",
+                "active": true,
+                "segment": 213213
+            }
+        ]
     }
 }
 

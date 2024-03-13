@@ -3,11 +3,10 @@ const ApiError = require("../errors/ApiError");
 const serverConfiguration = require('../ServerConfiguration')
 
 
-
 class MatrixController {
     async getMatrix(req, res, next) {
         try {
-            let {nameMatrix, ids, categories, locations} = req.body
+            let {nameMatrix, categories, locations} = req.body
 
             const categoriesIds = []
             categories.forEach(category => {
@@ -24,13 +23,7 @@ class MatrixController {
             let flag = false
             let sql = `SELECT id, microcategory_id, location_id, price FROM ${nameMatrix} where `
 
-            if (ids) {
-                sql = sql + `id=ANY(ARRAY[${ids}])`
-                flag = true
-            }
-            if (flag && categories) {
-                sql = sql + ` and microcategory_id=ANY(ARRAY[${categories}])`
-            } else if (!flag && categories) {
+            if (categories) {
                 sql = sql + `microcategory_id=ANY(ARRAY[${categories}])`
                 flag = true
             }

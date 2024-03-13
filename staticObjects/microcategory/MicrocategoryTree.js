@@ -7,12 +7,17 @@ class MicrocategoryTree {
         this._root = new MicrocategoryNode(1, "ROOT", null)
         this._index = 2
         this._indexes = []
+        this._microcategoriesNamesInArray = []
         this._indexes[1] = this._root
         this._initialize()
     }
 
     getMicrocategory(id) {
         return this._microcategories[id]
+    }
+
+    get microcategoriesNamesInArray() {
+        return this._microcategoriesNamesInArray
     }
 
     _initialize() {
@@ -29,6 +34,10 @@ class MicrocategoryTree {
                 child.setChild(node)
             })
         }
+
+        this._indexes.forEach(microcategory => {
+            this._microcategoriesNamesInArray.push(microcategory.name)
+        })
     }
 
     _returnSubTree(root, microcategories) {

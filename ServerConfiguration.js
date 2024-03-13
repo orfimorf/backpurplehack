@@ -1,5 +1,5 @@
-const {microcategoryTree} = require('./staticObjects/microcategory/MicrocategoryTree')
-const {locationTree} = require('./staticObjects/location/LocationTree')
+const microcategoryTree = require('./staticObjects/microcategory/MicrocategoryTree')
+const locationTree = require('./staticObjects/location/LocationTree')
 const SegmentsMock = require('./staticObjects/mocks/SegmentsMock')
 
 class ServerConfiguration {
@@ -8,6 +8,8 @@ class ServerConfiguration {
         this._disounts = []
         this._unusedSegments = []
         this._userSegments = []
+        this._microcategoryTree = microcategoryTree
+        this._locationTree = locationTree
         this._initializeServer()
     }
 
@@ -25,6 +27,14 @@ class ServerConfiguration {
 
     get userSegments() {
         return this._userSegments
+    }
+
+    get microcategoryTree() {
+        return this._microcategoryTree
+    }
+
+    get locationTree() {
+        return this._locationTree
     }
 
     _initializeServer() {
@@ -47,6 +57,10 @@ class ServerConfiguration {
         this._disounts = discounts
         this._unusedSegments = unusedSegments
         this._userSegments = userSegments
+    }
+
+    async reInitializeServer() {
+        this._initializeServer()
     }
 
     _getUserSegments() {

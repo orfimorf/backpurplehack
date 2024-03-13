@@ -7,12 +7,17 @@ class LocationTree {
         this._root = new LocationNode(1, "ROOT", null)
         this._index = 2
         this._indexes = []
+        this._locationsNamesInArray = []
         this._indexes[1] = this._root
         this._initialize()
     }
 
     getLocation(id) {
         return this._locations[id]
+    }
+
+    get locationsNamesInArray() {
+        return this._locationsNamesInArray
     }
 
     _initialize() {
@@ -29,6 +34,10 @@ class LocationTree {
                 child.setChild(node)
             })
         }
+
+        this._indexes.forEach(location => {
+            this._locationsNamesInArray.push(location.name)
+        })
     }
 
     _returnSubTree(root, locations) {

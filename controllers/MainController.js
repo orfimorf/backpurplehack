@@ -9,10 +9,14 @@ class MainController {
             const baselines = await Baseline.findAll()
             const discounts = await Discount.findAll()
             const segments = serverConfiguration.unusedSegments
+            const categories = serverConfiguration.microcategoryTree.microcategoriesNamesInArray
+            const locations = serverConfiguration.locationTree.locationsNamesInArray
             return res.json({
                 "baselines": baselines,
                 "discounts": discounts,
-                "unused_segments": segments
+                "unused_segments": segments,
+                "categories": categories,
+                "locations": locations
             })
         } catch (e) {
             next(ApiError.badRequest(e.message))
@@ -52,6 +56,7 @@ class MainController {
              */
 
             await t.commit()
+            serverConfiguration.reInitializeServer()
             return res.json("ок")
         } catch (e) {
             await t.rollback()

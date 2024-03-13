@@ -26,7 +26,7 @@ class MainController {
     async configureServer(req, res, next) {
         const t = await sequelize.transaction()
         try {
-            const {baseline, discounts} = req.body
+            const {baseline, active, upSeg} = req.body
 
             if (Array.isArray(baseline)) {
                 return next(ApiError.configurationError(
@@ -41,19 +41,23 @@ class MainController {
             }
 
             await Baseline.update({active: false}, {where: {}, transaction: t})
-            await Discount.update({active: false, segment: null}, {where: {}, transaction: t})
+            await Discount.update({active: false}, {where: {}, transaction: t})
 
-            await Baseline.update({active: true}, {where: {id: baseline["id"]}, transaction: t})
-            for (const discount of discounts) {
+            await Baseline.update({active: true}, {where: {id: baseline}, transaction: t})
+
+            for (const discount of upSeg) {
                 await Discount.update(
-                    {active: true, segment: discount["segment"]},
+                    {segment: discount["segment"]},
                     {where: {id: discount["id"]}, transaction: t}
                 )
             }
 
+            await Discount.update({active: true}, {where: {id: active}, transaction: t})
+
+
             await t.commit()
             serverConfiguration.reInitializeServer()
-            return res.json("ок")
+            return res.json(200)
         } catch (e) {
             await t.rollback()
             next(ApiError.badRequest(e.message))

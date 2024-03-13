@@ -7,7 +7,7 @@ const db = require('../db')
 class BaselineController {
     async create(req, res, next) {
         try {
-            const t =new Date().toLocaleString()
+            const t = new Date().toLocaleString()
             await db.query(`CREATE TABLE "${t}" AS SELECT * FROM "baseline_matrix_1";`)
             await db.query(`Alter TABLE "${t}" ALTER COLUMN id TYPE SERIAL;`)
         } catch (e) {
@@ -48,10 +48,10 @@ class BaselineController {
             await Baseline.create({name: newMatrixName},
                 {transaction: t})
 
-            if(name){
+            if (name) {
                 await db.query(`CREATE TABLE "${newMatrixName}" AS SELECT * FROM "${name}";`,
                     {transaction: t})
-            } else{
+            } else {
                 await db.query(`CREATE TABLE "${newMatrixName}"(
                     id integer,
                     microcategory_id integer,
@@ -65,13 +65,13 @@ class BaselineController {
 
             await t.commit()
 
-            if (updates) {
+            if (updates && updates.length > 0) {
                 for (const r of updates) {
-                    await db.query(`UPDATE "${newMatrixName}" SET price=${r.price} WHERE id=${r.id};`)
+                    await db.query(`UPDATE "${newMatrixName}" SET price=${r.price} microcategory_id=${r.category} location_id=${r.location} WHERE id=${r.id};`) //todo
                 }
             }
 
-            if (create) {
+            if (create && create.length > 0) {
                 let maxId = await db.query(`SELECT MAX("id") FROM "${newMatrixName}";`)
                 maxId = maxId[0][0]['max']
 
@@ -81,7 +81,7 @@ class BaselineController {
                 }
             }
 
-            if (del) {
+            if (del && del.length > 0) {
                 await db.query(`DELETE FROM "${newMatrixName}" WHERE id=any(array[${del}]);`)
             }
 

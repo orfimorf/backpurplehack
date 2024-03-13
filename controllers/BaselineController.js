@@ -2,6 +2,8 @@ const {json} = require('sequelize')
 const ApiError = require('../errors/ApiError')
 const {Baseline} = require('../models')
 const db = require('../db')
+const serverConfiguration = require('../ServerConfiguration')
+
 
 
 class BaselineController {
@@ -37,9 +39,6 @@ class BaselineController {
 
 
     async update(req, res, next) {
-
-        // TODO Сверить с фронтами названия переменных в JSON
-
         const t = await db.transaction()
         try {
             const {name, updates, create, del} = req.body
@@ -67,7 +66,7 @@ class BaselineController {
 
             if (updates && updates.length > 0) {
                 for (const r of updates) {
-                    await db.query(`UPDATE "${newMatrixName}" SET price=${r.price} microcategory_id=${r.category} location_id=${r.location} WHERE id=${r.id};`) //todo
+                    await db.query(`UPDATE "${newMatrixName}" SET price=${r.price} microcategory_id=${serverConfiguration.microcategoryTree.getIdByName(r.category)} location_id=${serverConfiguration.locationTree.getIdByName(r.location)} WHERE id=${r.id};`)
                 }
             }
 
@@ -77,7 +76,7 @@ class BaselineController {
 
                 for (const r of create) {
                     maxId++
-                    await db.query(`INSERT INTO "${newMatrixName}"(id, microcategory_id, location_id, price) VALUES (${maxId}, ${r.category}, ${r.location}, ${r.price});`)
+                    await db.query(`INSERT INTO "${newMatrixName}"(id, microcategory_id, location_id, price) VALUES (${maxId}, ${serverConfiguration.microcategoryTree.getIdByName(r.category)}, ${serverConfiguration.locationTree.getIdByName(r.location)}, ${r.price});`)
                 }
             }
 
@@ -88,7 +87,11 @@ class BaselineController {
             return res.json(200)
 
         } catch (e) {
-            await t.rollback()
+            try {
+                await t.rollback()
+            } catch (e) {
+                next(ApiError.badRequest(e.message))
+            }
             next(ApiError.badRequest(e.message))
         }
     }

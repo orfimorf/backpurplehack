@@ -2,6 +2,7 @@ const { json } = require('sequelize')
 const ApiError = require('../errors/ApiError')
 const {Discount, Baseline} = require('../models')
 const db = require("../db");
+const serverConfiguration = require("../ServerConfiguration");
 
 class DiscountController {
     async create(req, res, next) {
@@ -60,23 +61,23 @@ class DiscountController {
 
             await t.commit()
 
-            if (updates) {
+            if (updates && updates.length > 0) {
                 for (const r of updates) {
-                    await db.query(`UPDATE "${newMatrixName}" SET price=${r.price} WHERE id=${r.id};`)
+                    await db.query(`UPDATE "${newMatrixName}" SET price=${r.price} microcategory_id=${serverConfiguration.microcategoryTree.getIdByName(r.category)} location_id=${serverConfiguration.locationTree.getIdByName(r.location)} WHERE id=${r.id};`)
                 }
             }
 
-            if (create) {
+            if (create && create.length > 0) {
                 let maxId = await db.query(`SELECT MAX("id") FROM "${newMatrixName}";`)
                 maxId = maxId[0][0]['max']
 
                 for (const r of create) {
                     maxId++
-                    await db.query(`INSERT INTO "${newMatrixName}"(id, microcategory_id, location_id, price) VALUES (${maxId}, ${r.category}, ${r.location}, ${r.price});`)
+                    await db.query(`INSERT INTO "${newMatrixName}"(id, microcategory_id, location_id, price) VALUES (${maxId}, ${serverConfiguration.microcategoryTree.getIdByName(r.category)}, ${serverConfiguration.locationTree.getIdByName(r.location)}, ${r.price});`)
                 }
             }
 
-            if (del) {
+            if (del && del.length > 0) {
                 await db.query(`DELETE FROM "${newMatrixName}" WHERE id=any(array[${del}]);`)
             }
 

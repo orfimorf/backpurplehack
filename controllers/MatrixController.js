@@ -24,12 +24,12 @@ class MatrixController {
             let flag = false
             let sql = `SELECT id, microcategory_id, location_id, price FROM \"${nameMatrix}\" where `
 
-            if (categories) {
+            if (categories && categories.length > 0) {
                 sql = sql + `microcategory_id=ANY(ARRAY[${categories}])`
                 flag = true
             }
 
-            if (flag && locations) {
+            if (flag && locations && locations.length > 0) {
                 sql = sql + ` and location_id=ANY(ARRAY[${locations}])`
             } else if (!flag && locations) {
                 sql = sql + `location_id=ANY(ARRAY[${locations}])`

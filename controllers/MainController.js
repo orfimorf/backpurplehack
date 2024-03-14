@@ -35,16 +35,20 @@ class MainController {
                 ))
             }
 
-            if (!baseline) {
-                return next(ApiError.configurationError(
-                    "Должна быть задана хотя бы одна Baseline-матрица"
-                ))
+            if (baseline) {
+                await Baseline.update({active: false}, {where: {}, transaction: t})
+                await Baseline.update({active: true}, {where: {id: baseline}, transaction: t})
+
             }
 
-            await Baseline.update({active: false}, {where: {}, transaction: t})
+            // if (!baseline){
+            //     return next(ApiError.configurationError(
+            //         "Должна быть задана хотя бы одна Baseline-матрица"
+            //     ))
+            // }
+
             await Discount.update({active: false}, {where: {}, transaction: t})
 
-            await Baseline.update({active: true}, {where: {id: baseline}, transaction: t})
 
             for (const discount of upSeg) {
                 await Discount.update(

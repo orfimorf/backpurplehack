@@ -147,21 +147,21 @@ class MatrixController {
 
                 case "/": {
                     value = value/100
-                    for (let id in ids) {
+                    for (let id of ids) {
                         await db.query(`UPDATE "${newMatrixName}" SET price=price-price*${value} WHERE id=${id};`)
                     }
                     return res.json(200)
                 }
 
                 case "+": {
-                    for (let id in ids) {
+                    for (let id of ids) {
                         await db.query(`UPDATE "${newMatrixName}" SET price=price+${value} WHERE id=${id};`)
                     }
                     return res.json(200)
                 }
 
                 case "-": {
-                    for (let id in ids) {
+                    for (let id of ids) {
                         await db.query(`UPDATE "${newMatrixName}" SET price=price-${value} WHERE id=${id};`)
                     }
                     return res.json(200)

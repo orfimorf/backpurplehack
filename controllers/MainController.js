@@ -2,7 +2,7 @@ const ApiError = require('../errors/ApiError')
 const {Baseline, Discount} = require('../models')
 const sequelize = require('../db')
 const serverConfiguration = require('../ServerConfiguration')
-const request = require('request')
+const axios = require('axios')
 
 class MainController {
     async generateClient(req, res, next) {
@@ -27,17 +27,17 @@ class MainController {
     async configureServer(req, res, next) {
         const t = await sequelize.transaction()
         try {
-            const {baseline, active, upSeg} = req.body
+            const {id, active, upSeg} = req.body
 
-            if (Array.isArray(baseline)) {
+            if (Array.isArray(id)) {
                 return next(ApiError.configurationError(
                     "Одновременно может быть активна только одна Baseline-матрица"
                 ))
             }
 
-            if (baseline) {
+            if (id) {
                 await Baseline.update({active: false}, {where: {}, transaction: t})
-                await Baseline.update({active: true}, {where: {id: baseline}, transaction: t})
+                await Baseline.update({active: true}, {where: {id: id}, transaction: t})
 
             }
 
@@ -57,20 +57,13 @@ class MainController {
             await t.commit()
             serverConfiguration.reInitializeServer()
 
-            request.post(
-                {
-                    url: `${process.env.COST_SERVER}/api/main/reConfig`,
-                    form: {
-
-                    }
-                },
-                (err, response, body) => {
-                    if (err) {
-                        return res.status(500).send({message: err})
-                    }
-                    return res.send(body)
-                }
-            )
+            axios.get(`${process.env.COST_SERVER}/api/main/reConfig`).then(function (response){
+                console.log(response)
+            }).catch(function (error) {
+                console.log(error)
+            }).finally(function () {
+                console.log("200")
+            })
 
             return res.json(200)
         } catch (e) {

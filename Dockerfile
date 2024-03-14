@@ -14,4 +14,4 @@ RUN npm install
 COPY . ./
 
 # запускаем основной скрипт в момент запуска контейнера
-CMD npm run dev
+CMD node index.js

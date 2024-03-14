@@ -41,12 +41,6 @@ class MainController {
 
             }
 
-            // if (!baseline){
-            //     return next(ApiError.configurationError(
-            //         "Должна быть задана хотя бы одна Baseline-матрица"
-            //     ))
-            // }
-
             await Discount.update({active: false}, {where: {}, transaction: t})
 
 

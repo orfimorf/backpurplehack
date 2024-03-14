@@ -5,9 +5,6 @@ const {Baseline, Discount} = require("../models");
 
 
 class MatrixController {
-    constructor() {
-        console.log(":S:S:S:S:ЖЫЖЫЖЫЖЫЖ")
-    }
     async getMatrix(req, res, next) {
         try {
             let {nameMatrix, categories, locations} = req.body

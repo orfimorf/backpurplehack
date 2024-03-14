@@ -27,17 +27,16 @@ class MainController {
     async configureServer(req, res, next) {
         const t = await sequelize.transaction()
         try {
-            const {baseline, active, upSeg} = req.body
-
-            if (Array.isArray(baseline)) {
+            const {id, active, upSeg} = req.body
+            if (Array.isArray(id)) {
                 return next(ApiError.configurationError(
                     "Одновременно может быть активна только одна Baseline-матрица"
                 ))
             }
 
-            if (baseline) {
+            if (id) {
                 await Baseline.update({active: false}, {where: {}, transaction: t})
-                await Baseline.update({active: true}, {where: {id: baseline}, transaction: t})
+                await Baseline.update({active: true}, {where: {id: id}, transaction: t})
 
             }
 
@@ -60,19 +59,17 @@ class MainController {
             request.post(
                 {
                     url: `${process.env.COST_SERVER}/api/main/reConfig`,
-                    form: {
-
-                    }
+                    form: {}
                 },
                 (err, response, body) => {
                     if (err) {
                         return res.status(500).send({message: err})
+
                     }
                     return res.send(body)
                 }
             )
 
-            return res.json(200)
         } catch (e) {
             await t.rollback()
             next(ApiError.badRequest(e.message))

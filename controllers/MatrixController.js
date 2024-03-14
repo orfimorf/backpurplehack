@@ -61,14 +61,15 @@ class MatrixController {
             const {name, updates, create, del} = req.body
 
             let newMatrixName = '';
-            if (name.includes("baseline"))
+            if (name.includes("baseline")) {
                 newMatrixName = `baseline_${new Date().toLocaleString()}`
-            else
+                await Baseline.create({name: newMatrixName},
+                    {transaction: t})
+            } else {
                 newMatrixName = `discount_${new Date().toLocaleString()}`
-
-
-            await Baseline.create({name: newMatrixName},
-                {transaction: t})
+                await Discount.create({name: newMatrixName},
+                    {transaction: t})
+            }
 
 
             await db.query(`CREATE TABLE "${newMatrixName}" AS SELECT * FROM "${name}";`,
@@ -98,6 +99,77 @@ class MatrixController {
             }
 
             return res.json(200)
+
+        } catch (e) {
+            try {
+                await t.rollback()
+            } catch (e) {
+                next(ApiError.badRequest(e.message))
+            }
+            next(ApiError.badRequest(e.message))
+        }
+    }
+
+    async increase(req, res, next) {
+        const t = await db.transaction()
+        try {
+            const {name, ids, operator} = req.body
+            let {value} = req.body
+
+            let newMatrixName = '';
+
+            if (name.includes("baseline")) {
+                newMatrixName = `baseline_${new Date().toLocaleString()}`
+                await Baseline.create({name: newMatrixName},
+                    {transaction: t})
+            } else {
+                newMatrixName = `discount_${new Date().toLocaleString()}`
+                await Discount.create({name: newMatrixName},
+                    {transaction: t})
+            }
+
+
+            await db.query(`CREATE TABLE "${newMatrixName}" AS SELECT * FROM "${name}";`,
+                {transaction: t})
+
+
+            await t.commit()
+
+            switch (operator) {
+
+                case "*": {
+                    value = value/100
+                    for (let id of ids) {
+                        await db.query(`UPDATE "${newMatrixName}" SET price=price+price*${value} WHERE id=${id};`)
+                    }
+                    return res.json(200)
+                }
+
+                case "/": {
+                    value = value/100
+                    for (let id in ids) {
+                        await db.query(`UPDATE "${newMatrixName}" SET price=price-price*${value} WHERE id=${id};`)
+                    }
+                    return res.json(200)
+                }
+
+                case "+": {
+                    for (let id in ids) {
+                        await db.query(`UPDATE "${newMatrixName}" SET price=price+${value} WHERE id=${id};`)
+                    }
+                    return res.json(200)
+                }
+
+                case "-": {
+                    for (let id in ids) {
+                        await db.query(`UPDATE "${newMatrixName}" SET price=price-${value} WHERE id=${id};`)
+                    }
+                    return res.json(200)
+                }
+
+
+            }
+
 
         } catch (e) {
             try {

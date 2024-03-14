@@ -2,6 +2,7 @@ const ApiError = require('../errors/ApiError')
 const {Baseline, Discount} = require('../models')
 const sequelize = require('../db')
 const serverConfiguration = require('../ServerConfiguration')
+const request = require('request')
 
 class MainController {
     async generateClient(req, res, next) {
@@ -61,6 +62,22 @@ class MainController {
 
             await t.commit()
             serverConfiguration.reInitializeServer()
+
+            request.post(
+                {
+                    url: `${process.env.COST_SERVER}/api/main/reConfig`,
+                    form: {
+
+                    }
+                },
+                (err, response, body) => {
+                    if (err) {
+                        return res.status(500).send({message: err})
+                    }
+                    return res.send(body)
+                }
+            )
+
             return res.json(200)
         } catch (e) {
             await t.rollback()

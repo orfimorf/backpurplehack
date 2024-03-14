@@ -1,6 +1,7 @@
 const microcategoryTree = require('./staticObjects/microcategory/MicrocategoryTree')
 const locationTree = require('./staticObjects/location/LocationTree')
 const SegmentsMock = require('./staticObjects/mocks/SegmentsMock')
+const {Baseline, Discount} = require("./models");
 
 class ServerConfiguration {
     constructor() {
@@ -10,7 +11,6 @@ class ServerConfiguration {
         this._userSegments = []
         this._microcategoryTree = microcategoryTree
         this._locationTree = locationTree
-        this._initializeServer()
     }
 
     get baseline() {
@@ -37,9 +37,9 @@ class ServerConfiguration {
         return this._locationTree
     }
 
-    _initializeServer() {
-        const baseline = this._getBaselineMatrix()
-        const discounts = this._getDiscountMatrices()
+    async _initializeServer() {
+        const baseline = await this._getBaselineMatrix()
+        const discounts = await this._getDiscountMatrices()
         const userSegments = this._getUserSegments()
 
         const segments = []
@@ -60,43 +60,19 @@ class ServerConfiguration {
     }
 
     async reInitializeServer() {
-        this._initializeServer()
+        await this._initializeServer()
     }
 
     _getUserSegments() {
         return SegmentsMock.mockSegments
     }
 
-    _getBaselineMatrix() {
-        return [
-            {
-                "id": 1,
-                "name": "baseline_1",
-                "active": false
-            },
-            {
-                "id": 2,
-                "name": "baseline_2",
-                "active": true
-            }
-        ]
+    async _getBaselineMatrix(matrixController) {
+        return await Baseline.findOne({where: {active: true}})
     }
 
-    _getDiscountMatrices() {
-        return [
-            {
-                "id": 1,
-                "name": "discount_1",
-                "active": false,
-                "segment": null
-            },
-            {
-                "id": 2,
-                "name": "discount_2",
-                "active": true,
-                "segment": 213213
-            }
-        ]
+    async _getDiscountMatrices(matrixController) {
+        return await Discount.findAll({where: {active: true}})
     }
 }
 

@@ -1,7 +1,7 @@
 const db = require("../db");
 const ApiError = require("../errors/ApiError");
 const serverConfiguration = require('../ServerConfiguration')
-const {Baseline} = require("../models");
+const {Baseline, Discount} = require("../models");
 
 
 class MatrixController {
@@ -108,7 +108,6 @@ class MatrixController {
             next(ApiError.badRequest(e.message))
         }
     }
-
 
 }
 
